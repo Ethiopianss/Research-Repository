@@ -1,0 +1,223 @@
+/* Madda Walabu University Research Repository Styles */
+
+:root {
+    --mwu-dark-blue: #003366;
+    --mwu-light-blue: #ADD8E6;
+    --mwu-gold: #FFD700;
+    --mwu-brown: #A52A2A;
+    --mwu-green: #008000;
+    --mwu-white: #FFFFFF;
+}
+
+/* Body and html styling for sticky footer */
+html {
+    height: 100%;
+}
+
+body {
+    background-color: var(--mwu-white);
+    font-family: 'Arial', sans-serif;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+/* Main content container */
+.container.mt-4 {
+    flex: 1 0 auto;
+    margin-bottom: 3rem;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: var(--mwu-dark-blue) !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    color: var(--mwu-white) !important;
+    font-weight: bold;
+}
+
+.navbar-brand img {
+    height: 40px;
+    margin-right: 10px;
+    background-color: transparent;
+    border-radius: 50%;
+    padding: 0;
+    object-fit: contain;
+    filter: brightness(1.2) contrast(0.9);
+}
+
+/* Add this to ensure the image preserves transparency */
+img[src$='.png'] {
+    background-color: transparent !important;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.slogan {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: var(--mwu-gold);
+    margin-top: -2px;
+}
+
+.nav-link {
+    color: var(--mwu-white) !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: var(--mwu-gold) !important;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--mwu-dark-blue);
+    margin-bottom: 1rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card-header {
+    background-color: var(--mwu-dark-blue);
+    color: var(--mwu-white);
+    border-bottom: 3px solid var(--mwu-gold);
+}
+
+.card-title {
+    color: var(--mwu-dark-blue);
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--mwu-dark-blue);
+    border-color: var(--mwu-dark-blue);
+    color: var(--mwu-white);
+}
+
+.btn-primary:hover {
+    background-color: var(--mwu-gold);
+    border-color: var(--mwu-gold);
+    color: var(--mwu-dark-blue);
+}
+
+/* Search Form */
+.search-form {
+    background-color: rgba(0, 51, 102, 0.05);
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+/* Badges */
+.badge {
+    padding: 0.5em 1em;
+    margin-right: 0.5em;
+}
+
+.badge-primary {
+    background-color: var(--mwu-dark-blue);
+}
+
+.badge-secondary {
+    background-color: var(--mwu-light-blue);
+    color: var(--mwu-dark-blue);
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: var(--mwu-dark-blue);
+    box-shadow: 0 0 0 0.2rem rgba(0, 51, 102, 0.25);
+}
+
+/* Alerts */
+.alert-info {
+    background-color: var(--mwu-light-blue);
+    border-color: var(--mwu-dark-blue);
+    color: var(--mwu-dark-blue);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--mwu-dark-blue);
+    color: var(--mwu-white);
+    padding: 2rem 0;
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+.footer h5 {
+    color: var(--mwu-white);
+    margin-bottom: 0.5rem;
+}
+
+.footer p {
+    margin-bottom: 0.5rem;
+}
+
+.footer p:last-child {
+    color: var(--mwu-gold);
+}
+
+/* Welcome Message */
+.welcome-section {
+    background: linear-gradient(rgba(0, 51, 102, 0.9), rgba(0, 51, 102, 0.9)),
+                url('../static/images/university-bg.jpg');
+    background-size: cover;
+    color: var(--mwu-white);
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Paper Categories */
+.category-badge {
+    background-color: var(--mwu-gold);
+    color: var(--mwu-dark-blue);
+    font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar-brand img {
+        height: 30px;
+    }
+    
+    .welcome-section {
+        padding: 2rem 0;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Form buttons bottom spacing */
+form button[type="submit"] {
+    margin-bottom: 2rem;
+}
+
+/* Specific bottom padding for the upload page */
+form[enctype="multipart/form-data"] {
+    padding-bottom: 2rem;
+} 

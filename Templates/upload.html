@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Upload Research Paper</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="principal_investigator" class="form-label">Principal Investigator</label>
+                <input type="text" class="form-control" id="principal_investigator" name="principal_investigator" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="co_investigators" class="form-label">Co-Investigators (comma-separated)</label>
+                <input type="text" class="form-control" id="co_investigators" name="co_investigators" placeholder="e.g., John Turner, Abdii Chala, Sebontu Guddeta">
+            </div>
+            
+            <div class="mb-3">
+                <label for="abstract" class="form-label">Abstract</label>
+                <textarea class="form-control" id="abstract" name="abstract" rows="4" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="keywords" class="form-label">Keywords (comma-separated)</label>
+                <input type="text" class="form-control" id="keywords" name="keywords" placeholder="e.g., machine learning, artificial intelligence, data science" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="college" class="form-label">College</label>
+                <select class="form-select" id="college" name="college" required>
+                    <option value="">Select a college</option>
+                    {% for college_name in colleges %}
+                        <option value="{{ college_name }}">{{ college_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="department" class="form-label">Department</label>
+                <select class="form-select" id="department" name="department" required disabled>
+                    <option value="">Select a department</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status" required>
+                    <option value="proposed">Proposed</option>
+                    <option value="funded">Funded</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="submission_date" class="form-label">Submission Date</label>
+                <input type="date" class="form-control" id="submission_date" name="submission_date" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="paper" class="form-label">Paper File (PDF or Excel)</label>
+                <input type="file" class="form-control" id="paper" name="paper" accept=".pdf,.xlsx,.xls" required>
+                <small class="text-muted">Accepted formats: PDF (.pdf), Excel (.xlsx, .xls)</small>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Upload Paper</button>
+        </form>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Upload Guidelines</h5>
+                <ul class="list-unstyled">
+                    <li>✓ File must be in PDF or Excel format (.pdf, .xlsx, .xls)</li>
+                    <li>✓ Maximum file size: 10MB</li>
+                    <li>✓ Title should be clear and descriptive</li>
+                    <li>✓ Abstract should summarize the key points</li>
+                    <li>✓ Keywords should be relevant and specific</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const collegeDeptData = {{ college_dept_data | tojson | safe }};
+    
+    const collegeSelect = document.getElementById('college');
+    const departmentSelect = document.getElementById('department');
+    
+    collegeSelect.addEventListener('change', function() {
+        const selectedCollege = this.value;
+        
+        // Clear existing department options
+        departmentSelect.innerHTML = '<option value="">Select a department</option>';
+        
+        if (selectedCollege && collegeDeptData[selectedCollege]) {
+            departmentSelect.disabled = false;
+            const departments = collegeDeptData[selectedCollege];
+            departments.forEach(function(dept) {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                departmentSelect.appendChild(option);
+            });
+        } else {
+            departmentSelect.disabled = true;
+        }
+    });
+    
+    // Trigger change event on page load if a college is pre-selected (e.g., on validation error)
+    const preSelectedCollege = "{{ form_data.college if form_data else '' }}";
+    if (preSelectedCollege) {
+        collegeSelect.value = preSelectedCollege;
+        collegeSelect.dispatchEvent(new Event('change'));
+        // If a department was also selected, try to re-select it
+        const preSelectedDepartment = "{{ form_data.department if form_data else '' }}";
+        if (preSelectedDepartment) {
+           setTimeout(() => { // Use setTimeout to ensure options are populated
+              departmentSelect.value = preSelectedDepartment;
+           }, 0);
+        }
+    }
+</script>
+{% endblock %} 

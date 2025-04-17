@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Search Research Papers</h1>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" class="form-control" id="searchInput" name="q" placeholder="Search by title, PI, keywords..." value="{{ query }}" oninput="performSearch()">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <select class="form-select" name="college" id="college" onchange="performSearch()">
+                            <option value="">All Colleges</option>
+                            {% for college_name in colleges %}
+                            <option value="{{ college_name }}" {% if selected_college == college_name %}selected{% endif %}>{{ college_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <select class="form-select" name="department" id="department" {% if not selected_college %}disabled{% endif %} onchange="performSearch()">
+                            <option value="">All Departments</option>
+                            {# Departments will be populated by JS #}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="searchResults">
+    {% include '_papers_list.html' %}
+</div>
+
+<script>
+    const collegeDeptDataSearch = {{ college_dept_data | tojson | safe }};
+    const collegeSelectSearch = document.getElementById('college');
+    const departmentSelectSearch = document.getElementById('department');
+    let searchTimeout;
+    
+    function populateDepartments(selectedCollege) {
+        departmentSelectSearch.innerHTML = '<option value="">All Departments</option>';
+        
+        if (selectedCollege && collegeDeptDataSearch[selectedCollege]) {
+            departmentSelectSearch.disabled = false;
+            const departments = collegeDeptDataSearch[selectedCollege];
+            departments.forEach(function(dept) {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                if (dept === "{{ selected_department }}") {
+                    option.selected = true;
+                }
+                departmentSelectSearch.appendChild(option);
+            });
+        } else {
+            departmentSelectSearch.disabled = true;
+        }
+        performSearch();
+    }
+
+    function performSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const query = document.getElementById('searchInput').value;
+            const college = collegeSelectSearch.value;
+            const department = departmentSelectSearch.value;
+            
+            const url = `/search?q=${encodeURIComponent(query)}&college=${encodeURIComponent(college)}&department=${encodeURIComponent(department)}`;
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('searchResults').innerHTML = html;
+            });
+        }, 300);
+    }
+
+    collegeSelectSearch.addEventListener('change', function() {
+        populateDepartments(this.value);
+    });
+    
+    if (collegeSelectSearch.value) {
+        populateDepartments(collegeSelectSearch.value);
+    }
+</script>
+{% endblock %} 

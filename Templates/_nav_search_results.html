@@ -1,0 +1,22 @@
+{% for paper in papers[:5] %}
+<div class="search-result-item">
+    <h6 class="mb-1">{{ paper.title }}</h6>
+    <div class="small text-muted">
+        <strong>PI:</strong> {{ paper.principal_investigator }}
+        <br>
+        <strong>Department:</strong> {{ paper.department }}
+    </div>
+    <div class="mt-1">
+        <a href="{{ url_for('view_paper', paper_id=paper.id) }}" class="btn btn-sm btn-primary">View</a>
+    </div>
+</div>
+{% else %}
+<div class="search-result-item text-center text-muted">
+    No papers found matching your search.
+</div>
+{% endfor %}
+{% if papers|length > 5 %}
+<div class="search-result-item text-center">
+    <a href="{{ url_for('search', q=query) }}" class="text-primary">View all {{ papers|length }} results</a>
+</div>
+{% endif %} 

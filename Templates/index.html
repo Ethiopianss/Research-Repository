@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Latest Research Papers</h1>
+
+<div class="row">
+    {% for paper in papers %}
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ paper.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">
+                    By {{ paper.author.username }} | Submitted: {{ paper.submission_date.strftime('%Y-%m-%d') }}
+                </h6>
+                <div class="mb-2">
+                    <strong>PI:</strong> {{ paper.principal_investigator }}
+                    {% if paper.co_investigators %}
+                    <br><strong>Co-Investigators:</strong> {{ paper.co_investigators }}
+                    {% endif %}
+                </div>
+                <p class="card-text">{{ paper.abstract[:200] }}...</p>
+                <div class="mb-2">
+                    <span class="badge bg-info text-dark">{{ paper.college }}</span>
+                    <span class="badge bg-secondary">{{ paper.department }}</span>
+                    {% if paper.status == 'proposed' %}
+                    <span class="badge" style="background-color: #6c757d;">Proposed</span>
+                    {% else %}
+                    <span class="badge" style="background-color: #28a745;">Funded</span>
+                    {% endif %}
+                </div>
+                <div class="mb-2">
+                    {% for keyword in paper.keywords.split(',') %}
+                        {% if keyword.strip() %}
+                            <span class="badge bg-light text-dark border">{{ keyword.strip() }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <a href="{{ url_for('view_paper', paper_id=paper.id) }}" class="btn btn-primary" target="_blank">View Paper</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <p class="text-center">No research papers available yet.</p>
+    </div>
+    {% endfor %}
+</div>
+
+
+{% endblock %} 
