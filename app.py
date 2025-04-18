@@ -76,9 +76,9 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    is_admin = db.Column(db.Boolean, default=False)
     research_papers = db.relationship('ResearchPaper', backref='author', lazy=True)
-
+    is_ban = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -116,7 +116,9 @@ def register():
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        
+        if len(password)<8:
+            flash("Password must be at least 8 characters long")
+            return render_template('register.html')
         if User.query.filter_by(username=username).first():
             flash('Username already exists')
             return redirect(url_for('register'))
@@ -140,6 +142,8 @@ def login():
         
         if user and user.check_password(password):
             login_user(user)
+            if user.is_admin == True:
+                return redirect(url_for('admin'))
             return redirect(url_for('index'))
         flash('Invalid username or password')
     return render_template('login.html')
@@ -312,6 +316,71 @@ def view_paper(paper_id):
 def serve_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+# Add an admin route to manage users
+@app.route('/admin', methods=['GET', 'POST'])
+@login_required
+def admin():
+    if not current_user.is_admin:
+        flash('Access denied')
+        return redirect(url_for('index'))
+
+    if request.method == 'POST':
+        user_id = request.form.get('user_id')
+        action = request.form.get('action')
+
+        user = User.query.get(user_id)
+        if user:
+            if action == 'ban':
+                user.is_ban = True
+            elif action == 'unban':
+                user.is_ban = False
+            db.session.commit()
+            flash(f'User {user.username} has been updated.', 'success')
+        else:
+            flash('User not found.', 'error')
+
+    
+    users = User.query.all()
+    papers = ResearchPaper.query.all()
+    return render_template('admin.html', users =users, papers =papers )
+@app.route('/paper/<int:paper_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_paper(paper_id):
+    paper = ResearchPaper.query.get_or_404(paper_id)
+    if not (current_user.is_admin or current_user.id == paper.user_id):
+        flash('You do not have permission to edit this paper.', 'error')
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        paper.title = request.form.get('title')
+        paper.principal_investigator = request.form.get('principal_investigator')
+        paper.co_investigators = request.form.get('co_investigators')
+        paper.abstract = request.form.get('abstract')
+        paper.keywords = request.form.get('keywords')
+        paper.college = request.form.get('college')
+        paper.department = request.form.get('department')
+        paper.status = request.form.get('status')
+        try:
+            paper.submission_date = datetime.strptime(request.form.get('submission_date'), '%Y-%m-%d').date()
+        except Exception:
+            flash('Invalid submission date format.', 'error')
+            return render_template('edit_paper.html', paper=paper, colleges=college_dept_data.keys(), college_dept_data=college_dept_data)
+        db.session.commit()
+        flash('Paper updated successfully.', 'success')
+        return redirect(url_for('admin'))
+    return render_template('edit_paper.html', paper=paper, colleges=college_dept_data.keys(), college_dept_data=college_dept_data)
+
+@app.route('/paper/<int:paper_id>/delete', methods=['POST'])
+@login_required
+def delete_paper(paper_id):
+    paper = ResearchPaper.query.get_or_404(paper_id)
+    if not (current_user.is_admin or current_user.id == paper.user_id):
+        flash('You do not have permission to delete this paper.', 'error')
+        return redirect(url_for('index'))
+    db.session.delete(paper)
+    db.session.commit()
+    flash('Paper deleted successfully.', 'success')
+    return redirect(url_for('admin'))
+
 if __name__ == '__main__':
     with app.app_context():
         # Check if is_admin column exists
@@ -369,4 +438,4 @@ if __name__ == '__main__':
             else:
                 print(f"Database error: {e}")
                 
-    app.run(debug=True) 
+    app.run(debug=True)

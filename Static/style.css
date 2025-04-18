@@ -8,7 +8,21 @@
     --mwu-green: #008000;
     --mwu-white: #FFFFFF;
 }
+.con {
+    display: flex;
+    gap: 20px; /* Space between the two sections */
+    justify-content: space-between; /* Optional: ensures even spacing */
+}
 
+.ele {
+    display: block; /* Maintains block behavior */
+    width: 50%; /* Each section takes half the container's width */
+    box-sizing: border-box; /* Prevents padding/margins from overflowing */
+    padding: 10px; /* Optional: adds padding for better appearance */
+}
+.space_cell{
+    padding-right: 30px;
+}
 /* Body and html styling for sticky footer */
 html {
     height: 100%;
@@ -220,4 +234,66 @@ form button[type="submit"] {
 /* Specific bottom padding for the upload page */
 form[enctype="multipart/form-data"] {
     padding-bottom: 2rem;
-} 
+}
+
+.admin-container {
+    display: flex;
+    gap: 40px;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+.admin-section {
+    flex: 1 1 0;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    padding: 24px;
+    margin-bottom: 0;
+}
+.admin-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+.admin-section th, .admin-section td {
+    padding: 10px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: left;
+}
+.admin-section th {
+    background: var(--mwu-dark-blue);
+    color: #fff;
+}
+.admin-section tr:last-child td {
+    border-bottom: none;
+}
+.admin-section form {
+    display: inline;
+}
+.admin-section button, .admin-section a {
+    margin-right: 8px;
+    margin-bottom: 0;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: none;
+    background: var(--mwu-dark-blue);
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background 0.2s;
+}
+.admin-section button:hover, .admin-section a:hover {
+    background: var(--mwu-gold);
+    color: var(--mwu-dark-blue);
+}
+@media (max-width: 900px) {
+    .admin-container {
+        flex-direction: column;
+        gap: 24px;
+    }
+    .admin-section {
+        width: 100%;
+    }
+}

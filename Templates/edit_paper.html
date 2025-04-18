@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Research Paper</h1>
+<form method="POST">
+    <div>
+        <label>Title:</label>
+        <input type="text" name="title" value="{{ paper.title }}" required>
+    </div>
+    <div>
+        <label>Principal Investigator:</label>
+        <input type="text" name="principal_investigator" value="{{ paper.principal_investigator }}" required>
+    </div>
+    <div>
+        <label>Co-Investigators:</label>
+        <input type="text" name="co_investigators" value="{{ paper.co_investigators }}">
+    </div>
+    <div>
+        <label>Abstract:</label>
+        <textarea name="abstract" required>{{ paper.abstract }}</textarea>
+    </div>
+    <div>
+        <label>Keywords:</label>
+        <input type="text" name="keywords" value="{{ paper.keywords }}" required>
+    </div>
+    <div>
+        <label>College:</label>
+        <select name="college" required>
+            {% for college in colleges %}
+            <option value="{{ college }}" {% if paper.college == college %}selected{% endif %}>{{ college }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>Department:</label>
+        <select name="department" required>
+            {% for dept in college_dept_data[paper.college] %}
+            <option value="{{ dept }}" {% if paper.department == dept %}selected{% endif %}>{{ dept }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label>Status:</label>
+        <select name="status" required>
+            <option value="proposed" {% if paper.status == 'proposed' %}selected{% endif %}>Proposed</option>
+            <option value="funded" {% if paper.status == 'funded' %}selected{% endif %}>Funded</option>
+        </select>
+    </div>
+    <div>
+        <label>Submission Date:</label>
+        <input type="date" name="submission_date" value="{{ paper.submission_date }}" required>
+    </div>
+    <button type="submit">Save Changes</button>
+</form>
+{% endblock %}
