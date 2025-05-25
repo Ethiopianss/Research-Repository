@@ -438,4 +438,4 @@ if __name__ == '__main__':
             else:
                 print(f"Database error: {e}")
                 
-    app.run(debug=True)
+    app.run()
